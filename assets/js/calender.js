@@ -1,13 +1,14 @@
+'use strict';
 
 class Calender {
-    static init(socket) {
 
-        var CalendarGrouping;
-        var dataView;
-        var monthEventTemplate = '<div><div data-column = "card" class="smallIcon"></div></div>';
-        var currentArry = [];
-        var presenter = '<img style ="width:100%;height:100%" src="{{=it.card}}"/>';
-        var columns = [{
+    constructor(){
+        this.CalendarGrouping = {};
+        this.DataView = {};
+        this.UserData = [];
+        this.monthEventTemplate = `<div><div data-column = "card" class="smallIcon"></div></div>`;
+        this.presenter = `<img style ="width:100%;height:100%" src="{{=it.card}}"/>`;
+        this.columns = [{
             id: 'name',
             caption: 'name',
             dataField: 'name'
@@ -15,71 +16,87 @@ class Calender {
             id: 'card',
             caption: 'card',
             dataField: 'card',
-            presenter: presenter
+            presenter: this.presenter
         }, {
             id: 'date',
             caption: 'date',
             dataField: 'date'
         }];
-        
-        $('#btn-next').on('click',next);
-        $('#btn-previous').on('click',previous);
-    
-    //after window resize, change the template back
-    $(window).resize(function() {
-        if (dataView) {
-            var options = dataView.options;
-            var strategy = options.groupStrategy;
-            var strategyOptions = strategy.options;
-            if (strategyOptions.viewMode === "Month") {
-                options.cardHeight = 56;
-                options.cardWidth = 56;
-                options.rowTemplate = monthEventTemplate;
-            }
-            dataView.invalidate();
-        }
-    });
-
-    const render = () => {
-        const sourceData = createData();
-        console.log(sourceData)
-        CalendarGrouping = new GC.Spread.Views.Plugins.CalendarGrouping({});
-        CalendarGrouping.eventLimitClick.addHandler(function(sender, args) {
-            var options = sender.options;
-            options.cardHeight = 100;
-            options.cardWidth = 100;
-            options.rowTemplate = '<div><div data-column = "card" class="bigIcon"></div></div>';
-        });
-        CalendarGrouping.popoverClose.addHandler(function(sender, args) {
-            var options = sender.options;
-            options.cardHeight = 56;
-            options.cardWidth = 56;
-            options.rowTemplate = monthEventTemplate;
-            sender.invalidate();
-        });
-        dataView = new GC.Spread.Views.DataView(document.getElementById('grid1'), sourceData, columns, new GC.Spread.Views.Plugins.CardLayout({
-            cardHeight: 56,
-            cardWidth: 56,
-            grouping: {
-                field: 'date',
-                converter: function(field) {
-                    return field.toDateString();
-                }
-            },
-            rowTemplate: monthEventTemplate,
-            groupStrategy: CalendarGrouping
-        }));
-    
-        updateTitle();
     }
-    
-    $(document).ready(render); //初期描画
-    
-    function getMonth(currentDate, monthCount) {
-        var year = currentDate.getFullYear();
-        var month = currentDate.getMonth() + monthCount;
-        var day = currentDate.getDate();
-    
+
+    init(socket){
+        socket.onOpen( ev => console.log("OPEN", ev) )
+        socket.onError( ev => console.log("ERROR", ev) )
+        socket.onClose( ev => console.log("CLOSE", ev))
+        const chan = socket.channel("chat:lobby", {})
+        
+        // チャネルからnew_msgという種類のメッセージを受信した時の処理
+        chan.on("new_msg", msg => {
+            console.log(msg);
+            this.pushData(msg.body);
+            this.render();
+        });
+
+        $(document).ready(this.render('init')); //初期描画
+        this.setWindowAction(this.CalendarGrouping); //dom系処理を有効に
+    }
+
+    //ページ移動系処理
+    setWindowAction(){
+        //リサイズ処理
+        const resize = () => {
+            if (this.dataView) {
+                const options = this.dataView.options;
+                const strategy = options.groupStrategy;
+                const strategyOptions = strategy.options;
+                if (strategyOptions.viewMode === "Month") {
+                    options.cardHeight = 56;
+                    options.cardWidth = 56;
+                    options.rowTemplate = this.monthEventTemplate;
+                }
+                this.dataView.invalidate();
+            }
+        }
+
+        //前へボタン
+        const previous = () => {
+            const options = this.CalendarGrouping.options;
+            let currentDate = options.startDate;
+            currentDate = this.getMonth(currentDate, -1);
+            this.CalendarGrouping.options.startDate = currentDate;
+            this.updateTitle();
+            this.dataView.invalidate();
+        }
+        
+        //次へボタン
+        const next = () => {
+            const options = this.CalendarGrouping.options;
+            let currentDate = options.startDate;
+            currentDate = this.getMonth(currentDate, 1);
+            this.CalendarGrouping.options.startDate = currentDate;
+            this.updateTitle();
+            this.dataView.invalidate();
+        }
+
+        $('#btn-next').on('click', next);
+        $('#btn-previous').on('click', previous);
+        $(window).resize(resize);
+    }
+
+    //タイトルの更新
+    updateTitle(){
+        const options = this.CalendarGrouping.options;
+        const date = options.startDate;
+        const $title = document.getElementById("title");
+        const dateFormatter = new GC.Spread.Formatter.GeneralFormatter('mmmm yyyy');
+        $title.innerText = dateFormatter.format(date);
+    }
+
+    //月を取得
+    getMonth(currentDate, monthCount){
+        const day = currentDate.getDate();
+        let year = currentDate.getFullYear();
+        let month = currentDate.getMonth() + monthCount;
         if (month == 12) {
             month = 0;
             year += 1;
@@ -87,78 +104,52 @@ class Calender {
             month = 11;
             year -= 1;
         }
-    
+        console.log(new Date(year, month, day, 0, 0, 0));
         return new Date(year, month, day, 0, 0, 0);
     }
-    
-    function updateTitle() {
-        var options = CalendarGrouping.options;
-        var date = options.startDate;
-        var title = document.getElementById("title");
-        var dateFormatter = new GC.Spread.Formatter.GeneralFormatter('mmmm yyyy');
-        title.innerText = dateFormatter.format(date);
-    }
-    
-    function previous() {
-        var options = CalendarGrouping.options;
-        var currentDate = options.startDate;
-        currentDate = getMonth(currentDate, -1);
-        CalendarGrouping.options.startDate = currentDate;
-        updateTitle();
-        dataView.invalidate();
-    }
-    
-    function next() {
-        var options = CalendarGrouping.options;
-        var currentDate = options.startDate;
-        currentDate = getMonth(currentDate, 1);
-        CalendarGrouping.options.startDate = currentDate;
-        updateTitle();
-        dataView.invalidate();
-    }
-    
-    function getDay(currentDate, daysCount) {
-        var date = new Date(currentDate);
-        var timeSpan = 1000 * 60 * 60 * 24 * (daysCount ? daysCount : 1);
-        date.setTime(date.getTime() + timeSpan);
-    
-        return date;
-    }
-    
-    function createData() {
-        var names = ['n0bisuke', 'uko', 'chantoku', 'mao', 'wami', 'chachamaru', 'taka'];
-        var data = [];
-        var now = new Date();
-        var name;
-        var factor = 7;
-        var date;
-        for (var i = 0; i < names.length; i++) {
-            for (var j = 0; j < factor; j++) {
-                date = getDay(new Date(now.getFullYear(), now.getMonth(), 1), getRandomData(factor * 4));
-                name = names[i];
-                data.push({
-                    name: name,
-                    card: './images/' + name + '.png',
-                    date: date
-                });
-            }
-            currentArry.length = 0;
-        }
-    
-        return data;
-    }
-    
-    function getRandomData(factor) {
-        var dataRandom = Math.floor(Math.random() * factor + 1);
-        while (currentArry.indexOf(dataRandom) !== -1) {
-            dataRandom = Math.floor(Math.random() * factor + 1);
-        }
-    
-        currentArry.push(dataRandom);
-        return dataRandom;
+
+    //データの追加
+    pushData(name){
+        const now = new Date();
+        this.UserData.push({
+            name: name,
+            card: `./images/${name}.png`,
+            date: new Date(now.getFullYear(), now.getMonth(), 1)
+        });
     }
 
-  }
+    //レンダリング
+    render(flag = ''){
+        if(flag === 'init') this.pushData('n0bisuke');
+        const sourceData = this.UserData;
+        this.CalendarGrouping = new GC.Spread.Views.Plugins.CalendarGrouping({});
+        this.CalendarGrouping.eventLimitClick.addHandler((sender, args) => {
+            const options = sender.options;
+            options.cardHeight = 100;
+            options.cardWidth = 100;
+            options.rowTemplate = '<div><div data-column = "card" class="bigIcon"></div></div>';
+        });
+
+        this.CalendarGrouping.popoverClose.addHandler((sender, args) => {
+            const options = sender.options;
+            options.cardHeight = 56;
+            options.cardWidth = 56;
+            options.rowTemplate = this.monthEventTemplate;
+            sender.invalidate();
+        });
+
+        this.dataView = new GC.Spread.Views.DataView(document.getElementById('grid1'), sourceData, this.columns, new GC.Spread.Views.Plugins.CardLayout({
+            cardHeight: 56,
+            cardWidth: 56,
+            grouping: {
+                field: 'date',
+                converter: (field) =>  field.toDateString()
+            },
+            rowTemplate: this.monthEventTemplate,
+            groupStrategy: this.CalendarGrouping
+        }));
+        this.updateTitle();
+    }
 }
 
 export default Calender

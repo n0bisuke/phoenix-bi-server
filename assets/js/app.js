@@ -24,4 +24,5 @@ import Demo from "./demo"
 Demo.init(socket)
 
 import Calender from "./calender"
-Calender.init(socket)
+const calender = new Calender();
+calender.init(socket);
