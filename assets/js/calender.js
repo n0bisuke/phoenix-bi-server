@@ -65,21 +65,13 @@ class Calender {
             }
         }
 
-        //前へボタン
-        const previous = () => {
+        const previous = () => move(-1); //前へボタン
+        const next = () => move(1); //次へボタン
+
+        const move = (step) => {
             const options = this.CalendarGrouping.options;
             let currentDate = options.startDate;
-            currentDate = this[getMonth](currentDate, -1);
-            this.CalendarGrouping.options.startDate = currentDate;
-            this[updateTitle]();
-            this.dataView.invalidate();
-        }
-        
-        //次へボタン
-        const next = () => {
-            const options = this.CalendarGrouping.options;
-            let currentDate = options.startDate;
-            currentDate = this[getMonth](currentDate, 1);
+            currentDate = this[getMonth](currentDate, step);
             this.CalendarGrouping.options.startDate = currentDate;
             this[updateTitle]();
             this.dataView.invalidate();
@@ -127,8 +119,7 @@ class Calender {
 
     //レンダリング
     [render](flag = ''){
-        if(flag === 'init') this[pushData]('n0bisuke');
-        const sourceData = this.UserData;
+
         this.CalendarGrouping = new GC.Spread.Views.Plugins.CalendarGrouping({});
         this.CalendarGrouping.eventLimitClick.addHandler((sender, args) => {
             const options = sender.options;
@@ -145,7 +136,8 @@ class Calender {
             sender.invalidate();
         });
 
-        this.dataView = new GC.Spread.Views.DataView(document.getElementById('grid1'), sourceData, this.columns, new GC.Spread.Views.Plugins.CardLayout({
+        if(this.UserData[0] === undefined) return;
+        this.dataView = new GC.Spread.Views.DataView(document.getElementById('grid1'), this.UserData, this.columns, new GC.Spread.Views.Plugins.CardLayout({
             cardHeight: 56,
             cardWidth: 56,
             grouping: {
