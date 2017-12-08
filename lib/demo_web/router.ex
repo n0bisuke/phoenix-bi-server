@@ -18,6 +18,7 @@ defmodule DemoWeb.Router do
 
     get "/", PageController, :index
     get "/hello", HelloController, :hello
+    get "/timeline", TimelineController, :timeline
   end
 
   # Other scopes may use custom stacks.

@@ -1,0 +1,23 @@
+<body style="margin:0;position:absolute;top:0;bottom:0;left:0;right:0;font-size:14px;user-select:none;-webkit-user-select: none;overflow:hidden;">
+    <div class="wrapper">
+        <div class="button-container " id="calendarCommandPanel">
+            <div class="dateTextTitle">
+                <div id="title" style="font:400 18px arial,sans-serif;text-align: center;">20 Aug 2012-26 Aug 2012
+                </div>
+            </div>
+            <div class="btn-group btns" rol="group" style="float: right">
+                <div class="btn btn-default" id="btn-previous">
+                    <i class="demo-icon icon-left-big"></i>
+                </div>
+                <div class="btn btn-default" id="btn-next">
+                    <i class="demo-icon icon-right-big"></i>
+                </div>
+            </div>
+        </div>
+        <div id="gridContainer" style="height:720px;min-width: 800px">
+            <div id="grid1" style="height:100%;position: relative"></div>
+        </div>
+    </div>
+
+    <script src="<%= static_path(@conn, "/js/app.js") %>"></script>
+</body>

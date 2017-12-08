@@ -2,7 +2,7 @@ exports.config = {
   // See http://brunch.io/#documentation for docs.
   files: {
     javascripts: {
-      joinTo: "js/app.js"
+      joinTo: "js/app.js",
 
       // To use a separate vendor.js bundle, specify two files path
       // http://brunch.io/docs/config#-files-
@@ -11,13 +11,25 @@ exports.config = {
       //   "js/vendor.js": /^(?!js)/
       // }
       //
-      // To change the order of concatenation of files, explicitly mention here
-      // order: {
-      //   before: [
-      //     "vendor/js/jquery-2.1.1.js",
-      //     "vendor/js/bootstrap.min.js"
-      //   ]
-      // }
+      //To change the order of concatenation of files, explicitly mention here
+      order: {
+        before: [
+          "vendor/spread/css/gc.spread.views.dataview.10.3.0.css",
+          "vendor/spread/css/bootstrap-snippet.min.css",
+          "vendor/spread/css/plugins/gc.spread.views.cardlayout.10.3.0.css",
+          "vendor/spread/css/plugins/gc.spread.views.calendargrouping.10.3.0.css",
+
+          "vendor/jquery.min.js",
+          "vendor/spread/js/gc.spread.common.10.3.0.min.js",
+          "vendor/spread/js/gc.spread.views.dataview.10.3.0.min.js",
+          "vendor/spread/js/locale/gc.spread.views.dataview.locale.ja-JP.10.3.0.min.js",
+          "vendor/spread/js/plugins/gc.spread.views.cardlayout.10.3.0.min.js",
+          "vendor/spread/js/plugins/gc.spread.views.calendargrouping.10.3.0.min.js",
+          "vendor/spread/js/zepto.min.js",
+          "vendor/spread/js/license.js",
+          // "vendor/js/bootstrap.min.js"
+        ]
+      }
     },
     stylesheets: {
       joinTo: "css/app.css"

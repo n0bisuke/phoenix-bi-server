@@ -1,0 +1,13 @@
+/*!
+ * 
+ * SpreadJS Library 10.3.0
+ * 
+ * Copyright(c) GrapeCity, Inc.  All rights reserved.
+ * 
+ * Licensed under the SpreadJS Commercial License.
+ * spread.sales@grapecity.com
+ * http://spread.grapecity.com/Pages/Spread-JS-License/
+ * 
+ * 
+ */
+.calendar-grouping .no-select{-moz-user-select:none;-webkit-user-select:none;-ms-user-select:none;user-select:none}.calendar-grouping .day-event{background-color:#fd7;color:#444;border:1px solid #da6;border-radius:5px}.calendar-grouping .popover-dialog{width:340px;height:300px;overflow-y:auto;box-shadow:0 0 2px rgba(0,0,0,.12),0 2px 4px rgba(0,0,0,.24);border-radius:4px;position:absolute;background-color:#fff}.calendar-grouping .popover-header{background-color:#f5f5f5;padding:10px}.calendar-grouping .popover-close:hover{cursor:pointer}.calendar-grouping .popover-content{padding:10px}.calendar-grouping .popover-close{float:right}.calendar-grouping .gc-calendar-cell,.calendar-grouping .gc-calendar-cell-rtl{border-bottom:1px solid rgba(0,0,0,.2);border-right:1px solid rgba(0,0,0,.2)}.calendar-grouping .gc-day-header{text-align:center;font-weight:400;color:#767676;vertical-align:middle;font-size:11px}.calendar-grouping .gc-day-row-header{background-color:#eaeaea;color:#444;height:100%;text-align:center;vertical-align:middle}.calendar-grouping .gc-calendar-cell-text{float:right;margin-right:5px;margin-top:5px}.calendar-grouping .gc-group-header-row{background-color:transparent}
