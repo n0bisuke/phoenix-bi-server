@@ -29,6 +29,7 @@ class Calender {
             caption: 'date',
             dataField: 'date'
         }];
+        this.DSMEMBERS = ['n0bisuke','chantoku','uko','chachamaru','romrom','wami','taka'];
     }
 
     init(socket){
@@ -39,8 +40,24 @@ class Calender {
         
         // チャネルからnew_msgという種類のメッセージを受信した時の処理
         chan.on("new_msg", msg => {
-            console.log(msg);
-            this[pushData](msg.body);
+            const day = msg.user;
+            const name = msg.body;
+
+            //存在チェック
+            if(this.DSMEMBERS.indexOf(name) == -1){
+                console.log(`${name}は存在しません。`);
+                return;
+            }
+
+            //重複チェック
+            for(let i = 0, len = this.UserData.length; i < len; i++){
+                if(`${this.UserData[i].date.getDate()}` === day && `${this.UserData[i].name}` === name){
+                    console.log(`既に${name}さんは${day}日に出勤登録済みです。`);
+                    return;
+                }
+            }
+
+            this[pushData](name, day);
             this[render]();
         });
 
@@ -103,18 +120,20 @@ class Calender {
             month = 11;
             year -= 1;
         }
-        console.log(new Date(year, month, day, 0, 0, 0));
         return new Date(year, month, day, 0, 0, 0);
     }
 
     //データの追加
-    [pushData](name){
+    [pushData](name, today = 0){
         const now = new Date();
+        if(today === 0) today = now.getDate();
         this.UserData.push({
             name: name,
             card: `./images/${name}.png`,
-            date: new Date(now.getFullYear(), now.getMonth(), 1)
+            date: new Date(now.getFullYear(), now.getMonth(), today)
         });
+
+        // console.log(this.UserData);
     }
 
     //レンダリング
