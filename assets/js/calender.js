@@ -1,5 +1,12 @@
 'use strict';
 
+//private メソッド化
+const setWindowAction = Symbol(); 
+const updateTitle = Symbol();
+const getMonth = Symbol();
+const render = Symbol();
+const pushData = Symbol();
+
 class Calender {
 
     constructor(){
@@ -33,16 +40,16 @@ class Calender {
         // チャネルからnew_msgという種類のメッセージを受信した時の処理
         chan.on("new_msg", msg => {
             console.log(msg);
-            this.pushData(msg.body);
-            this.render();
+            this[pushData](msg.body);
+            this[render]();
         });
 
-        $(document).ready(this.render('init')); //初期描画
-        this.setWindowAction(this.CalendarGrouping); //dom系処理を有効に
+        $(document).ready(this[render]('init')); //初期描画
+        this[setWindowAction](this.CalendarGrouping); //dom系処理を有効に
     }
 
     //ページ移動系処理
-    setWindowAction(){
+    [setWindowAction](){
         //リサイズ処理
         const resize = () => {
             if (this.dataView) {
@@ -62,9 +69,9 @@ class Calender {
         const previous = () => {
             const options = this.CalendarGrouping.options;
             let currentDate = options.startDate;
-            currentDate = this.getMonth(currentDate, -1);
+            currentDate = this[getMonth](currentDate, -1);
             this.CalendarGrouping.options.startDate = currentDate;
-            this.updateTitle();
+            this[updateTitle]();
             this.dataView.invalidate();
         }
         
@@ -72,9 +79,9 @@ class Calender {
         const next = () => {
             const options = this.CalendarGrouping.options;
             let currentDate = options.startDate;
-            currentDate = this.getMonth(currentDate, 1);
+            currentDate = this[getMonth](currentDate, 1);
             this.CalendarGrouping.options.startDate = currentDate;
-            this.updateTitle();
+            this[updateTitle]();
             this.dataView.invalidate();
         }
 
@@ -84,7 +91,7 @@ class Calender {
     }
 
     //タイトルの更新
-    updateTitle(){
+    [updateTitle](){
         const options = this.CalendarGrouping.options;
         const date = options.startDate;
         const $title = document.getElementById("title");
@@ -93,7 +100,7 @@ class Calender {
     }
 
     //月を取得
-    getMonth(currentDate, monthCount){
+    [getMonth](currentDate, monthCount){
         const day = currentDate.getDate();
         let year = currentDate.getFullYear();
         let month = currentDate.getMonth() + monthCount;
@@ -109,7 +116,7 @@ class Calender {
     }
 
     //データの追加
-    pushData(name){
+    [pushData](name){
         const now = new Date();
         this.UserData.push({
             name: name,
@@ -119,8 +126,8 @@ class Calender {
     }
 
     //レンダリング
-    render(flag = ''){
-        if(flag === 'init') this.pushData('n0bisuke');
+    [render](flag = ''){
+        if(flag === 'init') this[pushData]('n0bisuke');
         const sourceData = this.UserData;
         this.CalendarGrouping = new GC.Spread.Views.Plugins.CalendarGrouping({});
         this.CalendarGrouping.eventLimitClick.addHandler((sender, args) => {
@@ -148,7 +155,7 @@ class Calender {
             rowTemplate: this.monthEventTemplate,
             groupStrategy: this.CalendarGrouping
         }));
-        this.updateTitle();
+        this[updateTitle]();
     }
 }
 
