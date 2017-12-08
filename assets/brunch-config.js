@@ -18,7 +18,6 @@ exports.config = {
           "vendor/spread/css/bootstrap-snippet.min.css",
           "vendor/spread/css/plugins/gc.spread.views.cardlayout.10.3.0.css",
           "vendor/spread/css/plugins/gc.spread.views.calendargrouping.10.3.0.css",
-
           "vendor/jquery.min.js",
           "vendor/spread/js/gc.spread.common.10.3.0.min.js",
           "vendor/spread/js/gc.spread.views.dataview.10.3.0.min.js",
@@ -27,7 +26,6 @@ exports.config = {
           "vendor/spread/js/plugins/gc.spread.views.calendargrouping.10.3.0.min.js",
           "vendor/spread/js/zepto.min.js",
           "vendor/spread/js/license.js",
-          // "vendor/js/bootstrap.min.js"
         ]
       }
     },

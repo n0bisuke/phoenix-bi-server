@@ -1,28 +1,29 @@
-class Calender {
-  static init() {
-    var CalendarGrouping;
-    var dataView;
-    var monthEventTemplate = '<div><div data-column = "card" class="smallIcon"></div></div>';
-    var currentArry = [];
-    
-    var presenter = '<img style ="width:100%;height:100%" src="{{=it.card}}"/>';
-    var columns = [{
-        id: 'name',
-        caption: 'name',
-        dataField: 'name'
-    }, {
-        id: 'card',
-        caption: 'card',
-        dataField: 'card',
-        presenter: presenter
-    }, {
-        id: 'date',
-        caption: 'date',
-        dataField: 'date'
-    }];
 
-    $('#btn-next').on('click',next);
-    $('#btn-previous').on('click',previous);
+class Calender {
+    static init(socket) {
+
+        var CalendarGrouping;
+        var dataView;
+        var monthEventTemplate = '<div><div data-column = "card" class="smallIcon"></div></div>';
+        var currentArry = [];
+        var presenter = '<img style ="width:100%;height:100%" src="{{=it.card}}"/>';
+        var columns = [{
+            id: 'name',
+            caption: 'name',
+            dataField: 'name'
+        }, {
+            id: 'card',
+            caption: 'card',
+            dataField: 'card',
+            presenter: presenter
+        }, {
+            id: 'date',
+            caption: 'date',
+            dataField: 'date'
+        }];
+        
+        $('#btn-next').on('click',next);
+        $('#btn-previous').on('click',previous);
     
     //after window resize, change the template back
     $(window).resize(function() {
@@ -38,9 +39,10 @@ class Calender {
             dataView.invalidate();
         }
     });
-    
-    $(document).ready(function() {
-        var sourceData = createData();
+
+    const render = () => {
+        const sourceData = createData();
+        console.log(sourceData)
         CalendarGrouping = new GC.Spread.Views.Plugins.CalendarGrouping({});
         CalendarGrouping.eventLimitClick.addHandler(function(sender, args) {
             var options = sender.options;
@@ -69,7 +71,9 @@ class Calender {
         }));
     
         updateTitle();
-    });
+    }
+    
+    $(document).ready(render); //初期描画
     
     function getMonth(currentDate, monthCount) {
         var year = currentDate.getFullYear();
@@ -122,7 +126,7 @@ class Calender {
     }
     
     function createData() {
-        var names = ['n0bisuke', 'uko', 'chantoku', 'romrom', 'wami', 'chachamaru', 'taka'];
+        var names = ['n0bisuke', 'uko', 'chantoku', 'mao', 'wami', 'chachamaru', 'taka'];
         var data = [];
         var now = new Date();
         var name;
@@ -153,6 +157,7 @@ class Calender {
         currentArry.push(dataRandom);
         return dataRandom;
     }
+
   }
 }
 

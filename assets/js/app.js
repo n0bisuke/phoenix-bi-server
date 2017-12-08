@@ -24,4 +24,4 @@ import Demo from "./demo"
 Demo.init(socket)
 
 import Calender from "./calender"
-Calender.init()
+Calender.init(socket)
