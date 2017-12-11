@@ -9,7 +9,7 @@ defmodule DemoWeb.ChatChannel do
 
   def join("chat:lobby", payload, socket) do
     Process.flag(:trap_exit, true) # 異常時にプロセスが死なない為の設定
-    {:ok, socket}
+    {:ok, load_messages(), socket}
   end
 
   # クライアントからpingという種類のメッセージがpushされた時
@@ -18,6 +18,7 @@ defmodule DemoWeb.ChatChannel do
   end
   
   def handle_in("new_msg", payload, socket) do
+    save_message(payload)
     broadcast! socket, "new_msg", payload
     {:reply, {:ok, payload}, socket}
   end
@@ -31,11 +32,11 @@ defmodule DemoWeb.ChatChannel do
   #   {:reply, {:ok, payload}, socket}
   # end
 
-  # defp load_messages() do
-  #   Agent.get(Demo.History, fn messages -> Enum.reverse(messages) end)
-  # end
+  defp load_messages() do
+    Agent.get(Demo.History, fn messages -> Enum.reverse(messages) end)
+  end
 
-  # defp save_message(message) do
-  #   Agent.update(Demo.History, fn messages -> [message | messages] end)
-  # end
+  defp save_message(message) do
+    Agent.update(Demo.History, fn messages -> [message | messages] end)
+  end
 end

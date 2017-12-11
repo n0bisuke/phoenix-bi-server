@@ -20,15 +20,16 @@ class Demo {
     var chan = socket.channel("chat:lobby", {})
 
     // チャネルに接続(join)
-    chan.join()
-      .receive("ignore", () => console.log("auth error"))
-      .receive("ok", (messages) => {
-        // messages.forEach(addMessage)
-        // scrollTo(0, document.body.scrollHeight)
-      })
-      .receive("timeout", () => console.log("Connection interruption"))
-    chan.onError(e => console.log("something went wrong", e))
-    chan.onClose(e => console.log("channel closed", e))
+    // chan.join()
+    //   .receive("ignore", () => console.log("auth error"))
+    //   .receive("ok", (messages) => {
+    //     messages.forEach(addMessage)
+    //     scrollTo(0, document.body.scrollHeight)
+    //     console.log("join ok")
+    //   })
+    //   .receive("timeout", () => console.log("Connection interruption"))
+    // chan.onError(e => console.log("something went wrong", e))
+    // chan.onClose(e => console.log("channel closed", e))
 
     // --- INPUT ---
 

@@ -33,11 +33,18 @@ class Calender {
     }
 
     init(socket){
-        socket.onOpen( ev => console.log("OPEN", ev) )
-        socket.onError( ev => console.log("ERROR", ev) )
-        socket.onClose( ev => console.log("CLOSE", ev))
         const chan = socket.channel("chat:lobby", {})
-        
+        chan.join()
+            .receive("ignore", () => console.log("auth error"))
+            .receive("ok", (messages) => {
+                messages.forEach((msg) => {
+                    console.log(msg);
+                    if(!isNaN(msg.user) && 0 <= msg.user && msg.user <= 31) this[pushData](msg.body, msg.user);
+                })
+                console.log("join ok")
+            })
+            .receive("timeout", () => console.log("Connection interruption"))
+
         // チャネルからnew_msgという種類のメッセージを受信した時の処理
         chan.on("new_msg", msg => {
             const day = msg.user;
@@ -58,7 +65,6 @@ class Calender {
             }
 
             this[pushData](name, day);
-            this[render]();
         });
 
         $(document).ready(this[render]('init')); //初期描画
@@ -132,8 +138,10 @@ class Calender {
             card: `./images/${name}.png`,
             date: new Date(now.getFullYear(), now.getMonth(), today)
         });
-
-        // console.log(this.UserData);
+        console.log(`----`);
+        
+        console.log(this.UserData);
+        this[render]();
     }
 
     //レンダリング
